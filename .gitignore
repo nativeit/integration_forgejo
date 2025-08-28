@@ -18,7 +18,7 @@ js/
 .idea/
 .vscode/
 .vscode-upload.json
-./integration_forgejo.code-workspace
+*.code-workspace
 
 # Editor files
 .*.sw*
