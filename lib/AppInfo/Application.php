@@ -60,8 +60,10 @@ class Application extends App implements IBootstrap
 		$context->registerEventListener(RenderReferenceEvent::class, ForgejoReferenceListener::class);
 		
 		// Register settings
-		$context->registerSettings('personal', \OCA\Forgejo\Settings\Personal::class);
-		$context->registerSettings('admin', \OCA\Forgejo\Settings\Admin::class);
+		$context->registerSettingsPersonal(\OCA\Forgejo\Settings\Personal::class);
+		$context->registerSettingsAdmin(\OCA\Forgejo\Settings\Admin::class);
+		$context->registerSettingsAdminSection(\OCA\Forgejo\Settings\AdminSection::class);
+		// Note: PersonalSection is not registered because we use the built-in "connected-accounts" section
 	}
 
 	public function boot(IBootContext $context): void

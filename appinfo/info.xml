@@ -23,6 +23,5 @@
         <admin>OCA\Forgejo\Settings\Admin</admin>
         <admin-section>OCA\Forgejo\Settings\AdminSection</admin-section>
         <personal>OCA\Forgejo\Settings\Personal</personal>
-        <personal-section>OCA\Forgejo\Settings\PersonalSection</personal-section>
     </settings>
 </info>
