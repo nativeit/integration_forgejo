@@ -18,11 +18,11 @@ services:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
     working_dir: /app
-    command: npm run watch
+    command: make npm-dev
     networks:
       - dev
 
-  # Build service for creating production assets
+  # Build service for creating production assets using makefile
   build:
     build:
       context: .
@@ -34,7 +34,7 @@ services:
     environment:
       - NODE_ENV=production
     working_dir: /app
-    command: npm run build
+    command: make build
     networks:
       - dev
 

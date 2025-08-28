@@ -1,11 +1,11 @@
 # Multi-stage Dockerfile for Nextcloud Forgejo Integration App
-# Stage 1: Build environment with Node.js and PHP
-FROM node:16-alpine AS builder
+# Stage 1: Build environment with Node.js
+FROM node:20-alpine AS builder
 
 LABEL maintainer="Nextcloud Forgejo Integration"
 LABEL description="Build environment for Nextcloud Forgejo integration app"
 
-# Install system dependencies
+# Install system dependencies needed for building
 RUN apk add --no-cache \
     git \
     make \
@@ -13,41 +13,26 @@ RUN apk add --no-cache \
     py3-pip \
     build-base \
     curl \
-    php81 \
-    php81-phar \
-    php81-json \
-    php81-curl \
-    php81-openssl \
-    php81-zip
-
-# Create symlink for PHP
-RUN ln -sf /usr/bin/php81 /usr/bin/php
+    rsync
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files first (for better Docker layer caching)
+# Copy package files and makefile first (for better Docker layer caching)
 COPY package*.json ./
+COPY makefile ./
 
-# Install npm dependencies
+# Install npm dependencies (npm ci)
 RUN npm ci --legacy-peer-deps
 
 # Copy source code
 COPY . .
 
-# Install Composer (if needed)
-RUN if [ -f "composer.json" ]; then \
-        curl -sS https://getcomposer.org/installer | php && \
-        mv composer.phar /usr/local/bin/composer && \
-        chmod +x /usr/local/bin/composer && \
-        composer install --prefer-dist --no-dev --optimize-autoloader; \
-    fi
-
-# Build the application
-RUN npm run build
+# Build the application using makefile
+RUN make build
 
 # Stage 2: Development environment
-FROM node:16-alpine AS development
+FROM node:20-alpine AS development
 
 # Install system dependencies for development
 RUN apk add --no-cache \
@@ -57,32 +42,18 @@ RUN apk add --no-cache \
     py3-pip \
     build-base \
     curl \
-    php81 \
-    php81-phar \
-    php81-json \
-    php81-curl \
-    php81-openssl \
-    php81-zip \
+    rsync \
     bash
-
-# Create symlink for PHP
-RUN ln -sf /usr/bin/php81 /usr/bin/php
-
-# Install Composer globally
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files and makefile
 COPY package*.json ./
+COPY makefile ./
 
-# Install all dependencies (including dev dependencies)
+# Install all dependencies (development mode)
 RUN npm install --legacy-peer-deps
-
-# Install Composer dependencies if composer.json exists
-COPY composer.json* ./
-RUN if [ -f "composer.json" ]; then composer install --prefer-dist; fi
 
 # Copy source code
 COPY . .
@@ -90,42 +61,31 @@ COPY . .
 # Expose port for development server (if needed)
 EXPOSE 3000
 
-# Default command for development
-CMD ["npm", "run", "watch"]
+# Default command for development - use makefile's dev target for watch mode
+CMD ["make", "npm-dev"]
 
 # Stage 3: Production build (lightweight)
 FROM alpine:latest AS production
 
-# Install minimal dependencies
+# Install minimal web server if needed
 RUN apk add --no-cache \
-    php81 \
-    php81-json \
-    php81-curl \
-    php81-openssl
-
-# Create symlink for PHP
-RUN ln -sf /usr/bin/php81 /usr/bin/php
+    nginx
 
 # Create app directory
 WORKDIR /app
 
 # Copy only the built application from builder stage
-COPY --from=builder /app .
-
-# Remove development files
-RUN rm -rf \
-    node_modules \
-    src \
-    package*.json \
-    webpack.config.js \
-    .eslintrc.js \
-    stylelint.config.js \
-    composer.json \
-    composer.lock
+COPY --from=builder /app/js ./js
+COPY --from=builder /app/css ./css
+COPY --from=builder /app/img ./img
+COPY --from=builder /app/lib ./lib
+COPY --from=builder /app/templates ./templates
+COPY --from=builder /app/appinfo ./appinfo
+COPY --from=builder /app/l10n ./l10n
 
 # Set proper permissions
 RUN chmod -R 644 . && \
     find . -type d -exec chmod 755 {} \;
 
 # Default command
-CMD ["php", "-S", "0.0.0.0:8000"]
+CMD ["nginx", "-g", "daemon off;"]

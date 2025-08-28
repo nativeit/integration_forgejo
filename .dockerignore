@@ -77,6 +77,5 @@ krankerl.toml
 .l10nignore
 .tx/
 
-# Build tools
-makefile
+# Build tools (keep makefile for Docker builds)
 webpack.config.js

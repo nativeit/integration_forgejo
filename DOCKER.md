@@ -1,6 +1,6 @@
 # Docker Development Environment for Nextcloud Forgejo Integration
 
-This directory contains Docker configuration files for developing and building the Nextcloud Forgejo Integration app.
+This directory contains Docker configuration files for developing and building the Nextcloud Forgejo Integration app. The Docker environment is integrated with the project's Makefile for consistent builds across all environments.
 
 ## Quick Start
 
@@ -19,7 +19,7 @@ This directory contains Docker configuration files for developing and building t
    scripts\dev.bat start
    ```
 
-2. **Start with file watching (live reload):**
+2. **Start with file watching (live reload using makefile):**
    ```bash
    # Linux/macOS
    ./scripts/dev.sh watch
@@ -33,7 +33,7 @@ This directory contains Docker configuration files for developing and building t
 
 ### Building the App
 
-1. **Build production assets:**
+1. **Build production assets using makefile:**
    ```bash
    # Linux/macOS
    ./scripts/dev.sh build
@@ -42,7 +42,16 @@ This directory contains Docker configuration files for developing and building t
    scripts\dev.bat build
    ```
 
-2. **Full Docker build:**
+2. **Run specific makefile targets:**
+   ```bash
+   # Linux/macOS
+   ./scripts/dev.sh make <target>
+   
+   # Windows
+   scripts\dev.bat make <target>
+   ```
+
+3. **Full Docker build:**
    ```bash
    # Linux/macOS
    ./scripts/docker-build.sh --env dev
@@ -59,14 +68,54 @@ This directory contains Docker configuration files for developing and building t
 |---------|-------------|
 | `start` | Start development environment |
 | `stop` | Stop development environment |
-| `build` | Build app assets |
-| `watch` | Start file watcher for live development |
+| `build` | Build app assets using makefile |
+| `watch` | Start file watcher for live development using makefile |
 | `logs` | Show container logs |
 | `shell` | Open shell in development container |
 | `clean` | Clean up Docker resources |
-| `install` | Install npm dependencies |
+| `install` | Install dependencies using makefile |
+| `make <target>` | Run specific makefile target |
 | `lint` | Run linter |
 | `lint:fix` | Run linter with auto-fix |
+
+### Available Makefile Targets
+
+The Docker environment uses the project's makefile for consistent builds:
+
+| Make Target | Description |
+|-------------|-------------|
+| `build` | Build production assets (npm ci + npm run build) |
+| `dev` | Development setup (installs dependencies in dev mode) |
+| `npm` | Production npm build (npm ci + npm run build) |
+| `npm-dev` | Development npm build (npm ci + npm run dev) |
+| `clean` | Clean build directories |
+| `appstore` | Create distributable app package |
+
+## Makefile Integration
+
+The Docker build environment is fully integrated with the project's Makefile, providing these benefits:
+
+- **Consistency**: Same build process in Docker as in local development
+- **Intelligent Dependencies**: Makefile automatically detects if composer.json or package.json exist
+- **Proper Build Order**: Dependencies installed first, then source copied, then built
+- **Multiple Targets**: Support for both development and production builds
+- **Standard Interface**: Uses established make targets that work everywhere
+
+### Examples
+
+```bash
+# Install dependencies and build for development
+./scripts/dev.sh make dev
+
+# Create production build
+./scripts/dev.sh make build
+
+# Create app store package
+./scripts/dev.sh make appstore
+
+# Clean build artifacts
+./scripts/dev.sh make clean
+```
 
 ### Docker Build Script
 

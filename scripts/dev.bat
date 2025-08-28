@@ -20,14 +20,14 @@ if "%1"=="stop" (
 )
 
 if "%1"=="build" (
-    echo Building app assets...
+    echo Building app assets using makefile...
     docker-compose -f docker-compose.dev.yml run --rm build
     echo ✅ Build complete
     goto :end
 )
 
 if "%1"=="watch" (
-    echo Starting file watcher for development...
+    echo Starting file watcher for development using makefile...
     docker-compose -f docker-compose.dev.yml up app-dev
     goto :end
 )
@@ -53,9 +53,20 @@ if "%1"=="clean" (
 )
 
 if "%1"=="install" (
-    echo Installing dependencies...
-    docker-compose -f docker-compose.dev.yml run --rm app-dev npm install --legacy-peer-deps
+    echo Installing dependencies using makefile...
+    docker-compose -f docker-compose.dev.yml run --rm app-dev make dev
     echo ✅ Dependencies installed
+    goto :end
+)
+
+if "%1"=="make" (
+    if "%2"=="" (
+        echo Usage: %0 make ^<target^>
+        echo Available make targets: build, dev, npm, npm-dev, clean, appstore
+        goto :end
+    )
+    echo Running make %2...
+    docker-compose -f docker-compose.dev.yml run --rm app-dev make %2
     goto :end
 )
 
@@ -72,17 +83,18 @@ if "%1"=="lint:fix" (
 )
 
 REM Default case - show usage
-echo Usage: %0 {start^|stop^|build^|watch^|logs^|shell^|clean^|install^|lint^|lint:fix}
+echo Usage: %0 {start^|stop^|build^|watch^|logs^|shell^|clean^|install^|make^|lint^|lint:fix}
 echo.
 echo Commands:
 echo   start       Start development environment
 echo   stop        Stop development environment
-echo   build       Build app assets
-echo   watch       Start file watcher for live development
+echo   build       Build app assets using makefile
+echo   watch       Start file watcher for live development using makefile
 echo   logs        Show container logs
 echo   shell       Open shell in development container
 echo   clean       Clean up Docker resources
-echo   install     Install npm dependencies
+echo   install     Install dependencies using makefile
+echo   make ^<target^> Run specific makefile target
 echo   lint        Run linter
 echo   lint:fix    Run linter with auto-fix
 
