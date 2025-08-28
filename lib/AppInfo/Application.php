@@ -58,6 +58,10 @@ class Application extends App implements IBootstrap
 
 		$context->registerReferenceProvider(ForgejoReferenceProvider::class);
 		$context->registerEventListener(RenderReferenceEvent::class, ForgejoReferenceListener::class);
+		
+		// Register settings
+		$context->registerSettings('personal', \OCA\Forgejo\Settings\Personal::class);
+		$context->registerSettings('admin', \OCA\Forgejo\Settings\Admin::class);
 	}
 
 	public function boot(IBootContext $context): void
@@ -92,4 +96,3 @@ class Application extends App implements IBootstrap
 		}
 	}
 }
-
