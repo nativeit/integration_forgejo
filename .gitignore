@@ -1,8 +1,38 @@
+# Local environment
 js/
 .code-workspace
+.env
+*.local
+.settings/
+.project
+
+# Agent-specific
+.prompt
+.kilocode/mcp.json
+
+# OS specific
 .DS_Store
+
+# IDEs
 .idea/
 .vscode/
 .vscode-upload.json
+
+# Editor files
 .*.sw*
+
+# Build components
 node_modules
+dist/
+coverage/
+build/
+.cache/
+.classpath
+
+# Logs/temp files
+*.log
+tmp/
+.tmp/
+*.bak
+*.backup
+
