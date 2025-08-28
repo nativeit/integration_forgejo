@@ -8,6 +8,7 @@ js/
 
 # Agent-specific
 .prompt
+/.kilocode
 .kilocode/mcp.json
 
 # OS specific
@@ -17,6 +18,7 @@ js/
 .idea/
 .vscode/
 .vscode-upload.json
+./integration_forgejo.code-workspace
 
 # Editor files
 .*.sw*
