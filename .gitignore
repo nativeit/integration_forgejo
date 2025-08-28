@@ -38,3 +38,5 @@ tmp/
 *.bak
 *.backup
 
+# 3rd-party Documentation
+/docs/nextcloud
