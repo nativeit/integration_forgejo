@@ -11,6 +11,9 @@ js/
 /.kilocode
 .kilocode/mcp.json
 
+# Docker environment
+.env.docker.local
+
 # OS specific
 .DS_Store
 

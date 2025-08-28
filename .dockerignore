@@ -1,0 +1,82 @@
+# Git and version control
+.git
+.gitignore
+.gitmodules
+
+# Documentation
+*.md
+docs/
+README*
+CHANGELOG*
+TODO*
+
+# Development and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Runtime and temporary files
+tmp/
+.tmp/
+*.bak
+*.backup
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs (will be created in container)
+js/
+dist/
+coverage/
+build/
+
+# Environment files
+.env*
+!.env.docker
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Docker files (avoid recursion)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Testing
+tests/
+test/
+**/*.test.js
+**/*.spec.js
+
+# Linting and formatting
+.eslintrc*
+.prettierrc*
+stylelint.config.js
+
+# Package manager locks (we'll use package.json only)
+yarn.lock
+
+# CI/CD
+.github/
+.travis.yml
+.gitlab-ci.yml
+
+# Nextcloud specific development files
+krankerl.toml
+.nextcloudignore
+.l10nignore
+.tx/
+
+# Build tools
+makefile
+webpack.config.js

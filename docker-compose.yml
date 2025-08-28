@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # Development environment
+  nextcloud-forgejo-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: nextcloud-forgejo-dev
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+      - /app/js  # Exclude built js directory from being overwritten by volume mount
+    ports:
+      - "3000:3000"
+      - "8080:8000"
+    environment:
+      - NODE_ENV=development
+    command: npm run watch
+    networks:
+      - nextcloud-forgejo
+
+  # Build environment (for CI/CD)
+  nextcloud-forgejo-build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: nextcloud-forgejo-build
+    volumes:
+      - ./dist:/app/dist
+      - ./js:/app/js
+    environment:
+      - NODE_ENV=production
+    command: npm run build
+    networks:
+      - nextcloud-forgejo
+
+  # Production environment
+  nextcloud-forgejo-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: nextcloud-forgejo-prod
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - nextcloud-forgejo
+
+  # Optional: Nextcloud development server
+  nextcloud-dev:
+    image: nextcloud:26-apache
+    container_name: nextcloud-dev
+    ports:
+      - "8081:80"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloud
+    volumes:
+      - nextcloud_data:/var/www/html
+      - ./:/var/www/html/custom_apps/integration_forgejo:ro
+    depends_on:
+      - mysql
+    networks:
+      - nextcloud-forgejo
+
+  # MySQL database for Nextcloud development
+  mysql:
+    image: mysql:8.0
+    container_name: nextcloud-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloud
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nextcloud-forgejo
+
+volumes:
+  node_modules:
+  nextcloud_data:
+  mysql_data:
+
+networks:
+  nextcloud-forgejo:
+    driver: bridge
