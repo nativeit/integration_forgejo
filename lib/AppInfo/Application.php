@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style
  * license that can be found in the LICENSE file or at
  * https://opensource.org/licenses/MIT.
- *  
+ *
  * Contributors:
  *  @author Hugo Duret  hugo.duret@cea.fr - Initial implementation
  *
@@ -58,7 +58,7 @@ class Application extends App implements IBootstrap
 
 		$context->registerReferenceProvider(ForgejoReferenceProvider::class);
 		$context->registerEventListener(RenderReferenceEvent::class, ForgejoReferenceListener::class);
-		
+
 		// Register settings
 		$context->registerSettingsPersonal(\OCA\Forgejo\Settings\Personal::class);
 		$context->registerSettingsAdmin(\OCA\Forgejo\Settings\Admin::class);
