@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Development environment using makefile
+  # Development environment
   nextcloud-forgejo-dev:
     build:
       context: .
@@ -17,11 +17,11 @@ services:
       - "8080:8000"
     environment:
       - NODE_ENV=development
-    command: make npm-dev
+    command: npm run watch
     networks:
       - nextcloud-forgejo
 
-  # Build environment (for CI/CD) using makefile
+  # Build environment (for CI/CD)
   nextcloud-forgejo-build:
     build:
       context: .
@@ -33,7 +33,7 @@ services:
       - ./js:/app/js
     environment:
       - NODE_ENV=production
-    command: make build
+    command: npm run build
     networks:
       - nextcloud-forgejo
 

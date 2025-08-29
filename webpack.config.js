@@ -13,6 +13,11 @@ webpackConfig.stats = {
 }
 
 const appId = 'integration_forgejo'
+
+// Clear any existing entry points from the base config
+webpackConfig.entry = {}
+
+// Set our specific entry points
 webpackConfig.entry = {
 	personalSettings: { import: path.join(__dirname, 'src', 'personalSettings.js'), filename: appId + '-personalSettings.js' },
 	adminSettings: { import: path.join(__dirname, 'src', 'adminSettings.js'), filename: appId + '-adminSettings.js' },

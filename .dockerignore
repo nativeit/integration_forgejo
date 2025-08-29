@@ -58,10 +58,8 @@ test/
 **/*.test.js
 **/*.spec.js
 
-# Linting and formatting
-.eslintrc*
+# Linting and formatting (keep for build process)
 .prettierrc*
-stylelint.config.js
 
 # Package manager locks (we'll use package.json only)
 yarn.lock
@@ -77,5 +75,7 @@ krankerl.toml
 .l10nignore
 .tx/
 
-# Build tools (keep makefile for Docker builds)
-webpack.config.js
+# Build tools - keep these for Docker builds
+# webpack.config.js - NEEDED for build
+# .eslintrc* - NEEDED for build
+# stylelint.config.js - NEEDED for build

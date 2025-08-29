@@ -53,8 +53,8 @@ if "%1"=="clean" (
 )
 
 if "%1"=="install" (
-    echo Installing dependencies using makefile...
-    docker-compose -f docker-compose.dev.yml run --rm app-dev make dev
+    echo Installing dependencies using docker makefile...
+    docker-compose -f docker-compose.dev.yml run --rm app-dev make -f docker.makefile docker-install
     echo ✅ Dependencies installed
     goto :end
 )
@@ -63,10 +63,17 @@ if "%1"=="make" (
     if "%2"=="" (
         echo Usage: %0 make ^<target^>
         echo Available make targets: build, dev, npm, npm-dev, clean, appstore
+        echo Available docker targets: docker-build, docker-dev, docker-install, docker-npm, docker-npm-dev
         goto :end
     )
     echo Running make %2...
-    docker-compose -f docker-compose.dev.yml run --rm app-dev make %2
+    REM Check if it's a docker-specific target
+    echo %2 | findstr /B "docker-" >nul
+    if %errorlevel%==0 (
+        docker-compose -f docker-compose.dev.yml run --rm app-dev make -f docker.makefile %2
+    ) else (
+        docker-compose -f docker-compose.dev.yml run --rm app-dev make %2
+    )
     goto :end
 )
 

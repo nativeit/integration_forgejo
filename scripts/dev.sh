@@ -41,18 +41,24 @@ case "$1" in
         echo "✅ Cleanup complete"
         ;;
     "install")
-        echo "Installing dependencies using makefile..."
-        docker-compose -f docker-compose.dev.yml run --rm app-dev make dev
+        echo "Installing dependencies using docker makefile..."
+        docker-compose -f docker-compose.dev.yml run --rm app-dev make -f docker.makefile docker-install
         echo "✅ Dependencies installed"
         ;;
     "make")
         if [ -z "$2" ]; then
             echo "Usage: $0 make <target>"
             echo "Available make targets: build, dev, npm, npm-dev, clean, appstore"
+            echo "Available docker targets: docker-build, docker-dev, docker-install, docker-npm, docker-npm-dev"
             exit 1
         fi
         echo "Running make $2..."
-        docker-compose -f docker-compose.dev.yml run --rm app-dev make $2
+        # Check if it's a docker-specific target
+        if [[ $2 == docker-* ]]; then
+            docker-compose -f docker-compose.dev.yml run --rm app-dev make -f docker.makefile "$2"
+        else
+            docker-compose -f docker-compose.dev.yml run --rm app-dev make "$2"
+        fi
         ;;
     "lint")
         echo "Running linter..."
